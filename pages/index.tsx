@@ -1,25 +1,73 @@
-import { Reorder } from "framer-motion";
+import { AnimatePresence, motion, Reorder } from "framer-motion";
 import _ from "lodash";
 import Head from "next/head";
 import {
   useGameService,
   useGameState,
   useGridRow,
+  useLetters,
+  useRound,
+  useStateValue,
   useWord,
 } from "../lib/game-context";
 
+function getLetterStyling(word: string | null, letter: string, pos: number) {
+  if (letter === "" || !word) {
+    return "";
+  }
+  const isCorrect = word?.includes(letter);
+  const isSelected = word?.includes(letter) && pos === word?.indexOf(letter);
+  return isCorrect && isSelected
+    ? "bg-correct-3 border-correct-7 text-correct-11"
+    : isCorrect
+    ? "bg-semicorrect-3 border-semicorrect-7 text-semicorrect-11"
+    : "";
+}
+
 function GridRow({ rowNumber }: { rowNumber: number }) {
   const row = useGridRow(rowNumber);
+  const round = useRound();
+  const value = useStateValue();
   const word = useWord();
+  // console.log(row, rowNumber, round);
+  // if (value === "revealing" && round === rowNumber) {
+  // }
   return (
     <>
       {row.map((item: string, ix: number) => (
-        <div
+        <motion.div
+          // initial="hidden"
+          // animate="visible"
+          // variants={{
+          //   hidden: { opacity: 0 },
+          //   visible: { opacity: 1 },
+          // }}
+          // transition={{ duration: 1 }}
           key={`${rowNumber}-${ix}`}
-          className="grid w-10 h-12 border-2 lg:w-16 lg:h-20 border-gray-5 place-content-center"
+          className={`w-14 h-10 border-2 lg:w-16 lg:h-20 border-gray-5 `}
         >
-          {item}
-        </div>
+          <AnimatePresence>
+            {round > rowNumber && (
+              <motion.div
+                data-testid={`round-${rowNumber}-pos-${ix}`}
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: { opacity: 1 },
+                }}
+                transition={{ duration: 1 }}
+                className={`grid place-content-center w-full h-full ${getLetterStyling(
+                  word,
+                  item.toLowerCase(),
+                  ix
+                )}`}
+              >
+                {item}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       ))}
     </>
   );
@@ -53,7 +101,7 @@ function GuessInput() {
         <Reorder.Item
           key={x}
           value={x}
-          className="relative w-12 h-16 text-xl border-2 lg:text-3xl lg:w-16 lg:h-20 border-gray-5 bg-gray-2"
+          className="relative h-16 text-xl border-2 w-14 lg:text-3xl lg:w-16 lg:h-20 border-gray-5 bg-gray-2"
         >
           <span className="grid w-full h-full text-gray-12 place-content-center">
             {x.split("-")[0]}
@@ -76,7 +124,7 @@ function GameState() {
       round: x?.context?.round,
     };
   }, _.isEqual);
-  return <div>{JSON.stringify(out)}</div>;
+  return <div className="text-xs">{JSON.stringify(out)}</div>;
 }
 
 const KEYS = [
@@ -87,6 +135,7 @@ const KEYS = [
 
 function Keyboard() {
   const service = useGameService();
+  const letters = useLetters();
   return (
     <div className="flex flex-col gap-0.5 lg:gap-2 mx-auto">
       {KEYS.map((keyRow, ix) => (
@@ -103,12 +152,20 @@ function Keyboard() {
                   service.send({ type: "KEY_SUBMIT", key });
                 }
               }}
-              className={`rounded-md bg-gray-4 text-11 ${
+              className={`select-none rounded-md text-11 active:scale-150 active:border ${
                 ["del"].includes(key)
-                  ? "w-10 h-12 text-xs lg:text-sm"
+                  ? "w-10 h-14 text-xs lg:text-sm"
                   : ["enter"].includes(key)
-                  ? "w-14 h-12 text-xs lg:text-sm"
-                  : "w-9 h-12 text-lg lg:text-xl"
+                  ? "w-14 h-14 text-xs lg:text-sm"
+                  : "w-9 h-14 text-lg lg:text-xl"
+              } ${
+                letters?.[key] === 2
+                  ? "bg-correct-3 border-correct-7 text-correct-11"
+                  : letters?.[key] === 1
+                  ? "bg-semicorrect-3 border-semicorrect-7 text-semicorrect-11"
+                  : letters?.[key] === 0
+                  ? "bg-gray-2"
+                  : "bg-gray-4"
               }`}
             >
               {key}
@@ -120,18 +177,55 @@ function Keyboard() {
   );
 }
 
-export default function Home() {
+function GameEndWin() {
+  const service = useGameService();
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2 m-auto">
+    <div>
+      <h1>You Win!</h1>
+      <button onClick={() => service.send({ type: "NEW_GAME" })}>
+        New Game
+      </button>
+    </div>
+  );
+}
+
+function GameEndLost() {
+  const service = useGameService();
+  const word = useWord();
+  return (
+    <div>
+      <h1>You Lost :(</h1>
+      <h2>The word was {word}</h2>
+      <button onClick={() => service.send({ type: "NEW_GAME" })}>
+        New Game
+      </button>
+    </div>
+  );
+}
+
+function ErrorModal() {
+  const service = useGameService();
+}
+
+export default function Home() {
+  const value = useStateValue();
+  return (
+    <div className="flex flex-col items-center justify-start mx-auto mt-2 overflow-hidden select-none ">
       <Head>
         <title>Wordle Clone</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex flex-col items-center justify-center flex-1 gap-4 text-center 1 xl:px-20 text-gray-11">
+      <main className="flex flex-col items-center justify-start flex-1 gap-2 text-center 1 xl:px-20 text-gray-11">
         <GameState />
         <Grid />
         <GuessInput />
-        <Keyboard />
+        {value === "endGameWin" ? (
+          <GameEndWin />
+        ) : value === "endGameLost" ? (
+          <GameEndLost />
+        ) : (
+          <Keyboard />
+        )}
       </main>
     </div>
   );

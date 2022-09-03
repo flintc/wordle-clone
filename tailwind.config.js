@@ -18,7 +18,6 @@ module.exports = {
         primary: radixColorToTW("violet"),
         secondary: radixColorToTW("crimson"),
         gray: radixColorToTW("mauve"),
-
         tomato: radixColorToTW("tomato"),
         red: radixColorToTW("red"),
         crimson: radixColorToTW("crimson"),
@@ -39,6 +38,9 @@ module.exports = {
         lime: radixColorToTW("lime"),
         yellow: radixColorToTW("yellow"),
         amber: radixColorToTW("amber"),
+
+        correct: radixColorToTW("correct"),
+        semicorrect: radixColorToTW("semicorrect"),
       },
     },
   },

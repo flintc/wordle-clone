@@ -45,6 +45,20 @@ export function useGridRow(rowNumber: number) {
   return row;
 }
 
+export function useStateValue() {
+  return useGameState((state) => state.value) as string;
+}
+
 export function useWord() {
-  return useGameState((state) => state.context.word);
+  return useGameState((state) => state.context.word) as string | null;
+}
+
+export function useRound() {
+  return useGameState((state) => state.context.round) as number;
+}
+
+export function useLetters() {
+  return useGameState((state) => state.context.letters) as {
+    [key: string]: number;
+  };
 }

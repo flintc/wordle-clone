@@ -72,6 +72,49 @@
 @import "@radix-ui/colors/blackA.css";
 @import "@radix-ui/colors/whiteA.css";
 
+:root {
+  --correct1: theme("colors.green.1");
+  --correct2: theme("colors.green.2");
+  --correct3: theme("colors.green.3");
+  --correct4: theme("colors.green.4");
+  --correct5: theme("colors.green.5");
+  --correct6: theme("colors.green.6");
+  --correct7: theme("colors.green.7");
+  --correct8: theme("colors.green.8");
+  --correct9: theme("colors.green.9");
+  --correct10: theme("colors.green.10");
+  --correct11: theme("colors.green.11");
+  --correct12: theme("colors.green.12");
+
+  --semicorrect1: theme("colors.yellow.1");
+  --semicorrect2: theme("colors.yellow.2");
+  --semicorrect3: theme("colors.yellow.3");
+  --semicorrect4: theme("colors.yellow.4");
+  --semicorrect5: theme("colors.yellow.5");
+  --semicorrect6: theme("colors.yellow.6");
+  --semicorrect7: theme("colors.yellow.7");
+  --semicorrect8: theme("colors.yellow.8");
+  --semicorrect9: theme("colors.yellow.9");
+  --semicorrect10: theme("colors.yellow.10");
+  --semicorrect11: theme("colors.yellow.11");
+  --semicorrect12: theme("colors.yellow.12");
+}
+
+.dark-theme {
+  --semicorrect1: theme("colors.amber.1");
+  --semicorrect2: theme("colors.amber.2");
+  --semicorrect3: theme("colors.amber.3");
+  --semicorrect4: theme("colors.amber.4");
+  --semicorrect5: theme("colors.amber.5");
+  --semicorrect6: theme("colors.amber.6");
+  --semicorrect7: theme("colors.amber.7");
+  --semicorrect8: theme("colors.amber.8");
+  --semicorrect9: theme("colors.amber.9");
+  --semicorrect10: theme("colors.amber.10");
+  --semicorrect11: theme("colors.amber.11");
+  --semicorrect12: theme("colors.amber.12");
+}
+
 html {
-  @apply bg-gray-1;
+  @apply overflow-hidden bg-gray-1;
 }

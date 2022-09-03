@@ -1,6 +1,8 @@
 import type { AppProps } from "next/app";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { GameProvider } from "../lib/game-context";
+import Head from "next/head";
+
 import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -9,6 +11,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, []);
   return (
     <GameProvider>
+      <Head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+      </Head>
       <Component {...pageProps} />
     </GameProvider>
   );
